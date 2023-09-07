@@ -1,10 +1,9 @@
+require('dotenv').config(); // to make it accessible
 const express = require('express');
 const app = express();
 const routes = require('./routes');
 const middlewares = require('./middlewares')
 const { returnJson } = require('./modules/JsonResponse');
-const createHttpError = require('http-errors');
-require('dotenv').config();
 
 /**
  * Globalize returnJson
