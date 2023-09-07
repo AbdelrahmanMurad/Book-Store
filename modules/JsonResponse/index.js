@@ -7,4 +7,4 @@ const returnJson = (res, statusCode, status, message, data) => {
         data: data
     })
 }
-module.exports = returnJson;
+module.exports = { returnJson };
