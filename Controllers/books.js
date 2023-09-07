@@ -18,7 +18,7 @@ const getBooks = (req, res, next) => {
             return returnJson(res, 200, true, '', books)
         })
     } catch (error) {
-        createHttpError(500, error.message)
+        next(createHttpError(500, error.message))
     }
 }
 
