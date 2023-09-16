@@ -5,7 +5,7 @@ const { hashSync } = require('bcryptjs')
  *  constructor()
  * 1- validation(): make a regular expression. [input: userData]
  * 2- isExist(): check existance of user in the database. [return promise]
- * 3- save(): save and insert the user to the database. [input: callback function, output: user id]
+ * 3- save(): save and insert the user to the database. [input: callback function, output: user id & status]
  * }
  */
 class User {

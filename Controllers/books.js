@@ -2,8 +2,10 @@ const { returnJson } = require('../modules/JsonResponse');
 const { dbConnection } = require('../configurations');
 const createHttpError = require('http-errors');
 
+//get all books stored in the db with pagination.
 const getBooks = (req, res, next) => {
     try {
+        //pagination
         const pageNumber = parseInt(req.query.page);
         const limit = 2;
         const skip = (pageNumber - 1) * limit;
