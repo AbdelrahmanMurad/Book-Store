@@ -1,12 +1,17 @@
 const { User, Reviewer } = require('../models');
 const createHttpError = require('http-errors');
 const { returnJson } = require('../modules/JsonResponse');
-
-/** signup() method
- * 1- userData: variable request data from body.
- * 2- validation operation.
- * 3- check existance from user instace. (you can save user here, in then() after result. [because its promise])
- * 4- save data.
+/**auth.js for contoller
+ * 1- signup()
+ *      a) userData: variable request data from body.
+ *      b) validation operation.
+ *      c) check existance from user instace. (you can save user here, in then() after result. [because its promise])
+ *      d) save data.
+ * 
+ * 2- login()
+ *      a) req.body in input.
+ *      b) fetch data if status is true by then() [promise]
+ *      c) catch the error.
  */
 
 const signup = async (req, res, next) => {
@@ -56,7 +61,20 @@ const signup = async (req, res, next) => {
     })
 }
 
+const login = (req, res, next) => {
+    //req.body in input.
+    User.login(req.body)
+        //fetch data if status is true by then() [promise]
+        .then((result) => {
+            if (result.status) {
+                return returnJson(res, 200, true, '', result.data)
+            } else
+                return next(createHttpError(result.code, result.message))
+        })
+        // catch the error.
+        .catch(err => next(createHttpError(500, err.message)))
+}
 
 module.exports = {
-    signup
+    signup, login
 }

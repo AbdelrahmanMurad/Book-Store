@@ -1,11 +1,12 @@
 const { dbConnection } = require('../configurations')
-const { userVali } = require('../validations')
-const { hashSync } = require('bcryptjs')
+const { userVali, loginVali } = require('../validations')
+const { hashSync, compareSync } = require('bcryptjs')
 /**class User {
  *  constructor()
- * 1- validation(): make a regular expression. [input: userData]
+ * 1- validation(): make a regular expression. [input: user data]
  * 2- isExist(): check existance of user in the database. [return promise]
  * 3- save(): save and insert the user to the database. [input: callback function, output: user id & status]
+ * 4- login(): login operation  [return promise - input & output: data]
  * }
  */
 class User {
@@ -14,7 +15,7 @@ class User {
         this.userData = userData
     }
 
-    //validation(): make a regular expression. [input: userData]
+    //validation(): make a regular expression. [input: user data]
     static validation(userData) {
         try {
             return userVali.validate(userData)
@@ -88,6 +89,59 @@ class User {
                 })
             }
         })
+    }
+
+    /**login() method
+     * 1- make a validation operation.
+     * 2- dbConnection to fetch username & password by findOne
+     * 3- compare between passwords
+     */
+    static login(loginData) {
+        return new Promise((resolve, reject) => {
+
+            //make a validation operation.
+            const valiResult = loginVali.validate(loginData);
+            if (valiResult.error) {
+                resolve({
+                    status: false,
+                    message: validation.error.message,
+                    code: 400
+                })
+            }
+
+            //dbConnection to fetch username & password by findOne
+            dbConnection('users', async (collection) => {
+                try {
+                    const user = await collection.findOne(
+                        { username: loginData.username },
+                        { projection: { username: 1, password: 1 } }
+                    )
+
+                    //compare between passwords
+                    if (user) {
+                        if (compareSync(loginData.password, user.password) == true) {
+                            resolve({
+                                status: true,
+                                data: user
+                            })
+                        }
+                    } else {
+                        resolve({
+                            status: false,
+                            message: 'login failed',
+                            code: 401
+                        })
+                    }
+                } catch (error) {
+                    reject({
+                        status: false,
+                        message: error.message
+                    })
+                }
+            })
+
+        })
+
     }
 
 }
