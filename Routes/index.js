@@ -1,5 +1,6 @@
 const bookRouter = require('./books')
 const authRouter = require('./auth')
+const reviewRouter = require('./review')
 
 const Test = [
     { Test: 'Test' }
@@ -13,4 +14,5 @@ module.exports = (app) => {
     //Routes of models
     app.use('/books', bookRouter);
     app.use('/auth', authRouter);
+    app.use('/reviews', reviewRouter)
 }
