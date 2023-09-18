@@ -1,6 +1,7 @@
 const { User, Reviewer } = require('../models');
 const createHttpError = require('http-errors');
 const { returnJson } = require('../modules/JsonResponse');
+const jwt = require('jsonwebtoken')
 /**auth.js for contoller
  * 1- signup()
  *      a) userData: variable request data from body.
@@ -10,7 +11,9 @@ const { returnJson } = require('../modules/JsonResponse');
  * 
  * 2- login()
  *      a) req.body in input.
- *      b) fetch data if status is true by then() [promise]
+ *      b) fetch data if status is true by then() [promise] - token
+ *              - generate token - verify token if its authorized - decode token
+ *              - verify & decode in middlewares
  *      c) catch the error.
  */
 
@@ -67,7 +70,15 @@ const login = (req, res, next) => {
         //fetch data if status is true by then() [promise]
         .then((result) => {
             if (result.status) {
-                return returnJson(res, 200, true, '', result.data)
+                //return token (generate)
+                const secretKey = process.env.KEY;
+                //sign({payload}, secretKey) => generate Token
+                const token = jwt.sign({
+                    _id: result.data._id,
+                    _reviewer_id: result.data._reviewer_id
+                }, secretKey)
+
+                return returnJson(res, 200, true, '', token)
             } else
                 return next(createHttpError(result.code, result.message))
         })

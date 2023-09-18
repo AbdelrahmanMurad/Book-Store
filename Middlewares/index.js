@@ -16,4 +16,6 @@ module.exports = {
         //Body Parser to clear the type of data.
         app.use(express.json());
     },
+
+    auth: require('./auth')
 }
